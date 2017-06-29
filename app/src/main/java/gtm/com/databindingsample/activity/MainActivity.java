@@ -1,13 +1,13 @@
 package gtm.com.databindingsample.activity;
 
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -26,12 +26,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     private UsersListAdapter mAdapter;
+    private static String WORK_COMPLETED = "Work Completed!";
+    private static String WORK_PENDING = "Work Pending!";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final ActivityMainBinding binding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
         setSupportActionBar(binding.toolbar);
+
         binding.toolbar.setTitle("Gowthm kumar");
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
@@ -41,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl("https://jsonplaceholder.typicode.com/").addConverterFactory(GsonConverterFactory.create())
                         .build();
-
-
                 ApiService apiService = retrofit.create(ApiService.class);
                 apiService.getUsers().enqueue(new Callback<List<UserDetailsModel>>() {
                     @Override
@@ -65,25 +67,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    /**
+     * Custom Binding using Binding Adapter.
+     */
+    @BindingAdapter("isWorkCompleted")
+    public static void setWorkCompleted(TextView textView, boolean isWorkCompleted) {
+        if (isWorkCompleted) {
+            textView.setText(WORK_COMPLETED);
+        } else {
+            textView.setText(WORK_PENDING);
         }
 
-        return super.onOptionsItemSelected(item);
+
     }
+
 }
